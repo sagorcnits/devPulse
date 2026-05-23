@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { errorHandler, notFound } from "./middleware/errorHandler";
 dotenv.config();
 
 const app = express();
@@ -17,3 +18,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use(errorHandler);
+app.use(notFound);

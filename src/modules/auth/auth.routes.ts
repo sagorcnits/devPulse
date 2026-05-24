@@ -8,4 +8,5 @@ authRouter.post("/register", registerValidation, authController.register);
 authRouter.get("/users", authController.getusers);
 authRouter.get("/users/:id", authController.getUserById);
 authRouter.delete("/users/:id", authController.deleteUser);
+authRouter.patch("/users/:id", authController.updateUser);
 export default authRouter;

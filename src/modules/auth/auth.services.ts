@@ -27,9 +27,46 @@ const authService = {
 
     return rows;
   },
-  updateUser: async (id: number, user: TUser) => {
-    const query = `UPDATE users SET name = ?, role= ?,  password = ? WHERE id = ?`;
-    const values = [user.name, user?.role, user.password, id];
+
+  getUserByEmail: async (email: string) => {
+    const query = `SELECT * FROM users WHERE email = ?`;
+    const values = [email];
+
+    const [rows] = await db.execute(query, values);
+
+    return rows;
+  },
+
+  updateUser: async (id: number, user: Partial<TUser>) => {
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    if (user.name) {
+      fields.push("name = ?");
+      values.push(user.name);
+    }
+
+    if (user.role) {
+      fields.push("role = ?");
+      values.push(user.role);
+    }
+
+    if (user.password) {
+      fields.push("password = ?");
+      values.push(user.password);
+    }
+
+    if (fields.length === 0) {
+      throw new Error("No fields provided for update");
+    }
+
+    values.push(id);
+
+    const query = `
+    UPDATE users
+    SET ${fields.join(", ")}
+    WHERE id = ?
+  `;
 
     const [rows] = await db.execute(query, values);
 

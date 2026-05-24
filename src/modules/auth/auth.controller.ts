@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { sendError } from "../../common/sendError";
 import { sendResponse } from "../../common/sendResponse";
 import { generateHasPassword } from "../../utils/hash-passowrd";
 import authModel from "./auth.model";
@@ -8,8 +9,16 @@ const authController = {
   register: async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
-    const hashPassword = generateHasPassword(password);
+    const existingUser: any = await authService.getUserByEmail(email);
+    console.log(existingUser);
+    if (existingUser?.length > 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User Already Exist",
+      });
+    }
 
+    const hashPassword = generateHasPassword(password);
     const user = {
       name,
       email,
@@ -56,19 +65,39 @@ const authController = {
   updateUser: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { name, email, password } = req.body;
 
-      const user = {
-        name,
-        email,
-        password,
-      };
+      const existingUser = await authService.getUserById(Number(id));
+
+      if (!existingUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      const { name, role, password } = req.body;
+
+      const user: Partial<TUser> = {};
+
+      if (name) {
+        user.name = name;
+      }
+
+      if (role) {
+        user.role = role;
+      }
+
+      if (password) {
+        user.password = await generateHasPassword(password);
+      }
 
       const users = await authService.updateUser(Number(id), user as TUser);
-      console.log(users);
+
       return sendResponse(res, 200, "User updated successfully", users);
-    } catch (error) {
-      res.status(500).json(error);
+    } catch (error: any) {
+      console.log(error);
+
+      return sendError(res, 500, error.message, error);
     }
   },
 };

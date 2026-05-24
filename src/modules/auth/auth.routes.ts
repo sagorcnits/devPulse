@@ -7,6 +7,8 @@ const authRouter = Router();
 
 // all routes
 authRouter.post("/register", registerValidation, authController.register);
+authRouter.post("/login", authController.login);
+
 authRouter.get(
   "/users",
   authMiddleware,
@@ -14,7 +16,11 @@ authRouter.get(
   authController.getusers,
 );
 authRouter.get("/users/:id", authMiddleware, authController.getUserById);
-authRouter.delete("/users/:id", authMiddleware, authController.deleteUser);
+authRouter.delete(
+  "/users/:id",
+  checkRole(["maintainor"]),
+  authMiddleware,
+  authController.deleteUser,
+);
 authRouter.patch("/users/:id", authMiddleware, authController.updateUser);
-authRouter.post("/login", authController.login);
 export default authRouter;

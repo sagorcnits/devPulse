@@ -59,6 +59,15 @@ const issueService = {
 
     return rows;
   },
+
+  deleteIssue: async (id: number) => {
+    const query = `DELETE FROM issues WHERE id = ?`;
+    const values = [id];
+
+    const [rows] = await db.execute(query, values);
+
+    return rows;
+  },
 };
 
 export default issueService;

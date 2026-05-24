@@ -71,6 +71,26 @@ const issueController = {
       res.status(500).json(error);
     }
   },
+  deleteIssue: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const existingIssue = await issueService.getIssueById(Number(id));
+
+      if (!existingIssue) {
+        return res.status(404).json({
+          success: false,
+          message: "Issue not found",
+        });
+      }
+
+      const issues = await issueService.deleteIssue(Number(id));
+
+      return sendResponse(res, 200, "Issue deleted successfully", issues);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 };
 
 export default issueController;

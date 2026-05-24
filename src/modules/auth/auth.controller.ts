@@ -44,12 +44,12 @@ const authController = {
 
     const existingUser: any = await authService.getUserByEmail(email);
     // generate token
-    const token = generateToken(existingUser[0]);
 
     if (existingUser?.length > 0) {
       const user = existingUser[0];
       const isPasswordCorrect = await comparePassword(password, user.password);
       if (isPasswordCorrect) {
+        const token = generateToken(existingUser[0]);
         return sendResponse(res, 200, "User logged in successfully", {
           token,
           user,

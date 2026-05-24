@@ -4,9 +4,8 @@ import { sendError } from "../common/sendError";
 const checkRole = (role: string[]) => {
   // return
   return (req: Request, res: Response, next: NextFunction) => {
-    const { role: userRole } = req.body;
-
-    if (role.includes(userRole)) {
+    console.log(req.user);
+    if (role.includes(req?.user?.role)) {
       next();
     } else {
       sendError(res, 401, "Unauthorized", "");

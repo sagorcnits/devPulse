@@ -6,7 +6,12 @@ import issueController from "./issue.controller";
 const issueRouter = Router();
 
 issueRouter.post("/", authMiddleware, issueController.createIssue);
-issueRouter.get("/", authMiddleware, issueController.getIssues);
+issueRouter.get(
+  "/",
+  authMiddleware,
+  checkRole(["maintainor"]),
+  issueController.getIssues,
+);
 issueRouter.get("/:id", authMiddleware, issueController.getIssueById);
 issueRouter.patch(
   "/:id",

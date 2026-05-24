@@ -8,6 +8,7 @@ const authModel = {
     const query = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
 
     const [rows] = await db.execute(query, values);
+    console.log(rows);
     return rows;
   },
 };

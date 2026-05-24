@@ -4,6 +4,7 @@ import express from "express";
 
 import { errorHandler, notFound } from "./middleware/errorHandler";
 import authRoutes from "./modules/auth/auth.routes";
+import issueRoutes from "./modules/issues/issue.routes";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // routes
 app.use("/auth", authRoutes);
+app.use("/issues", issueRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running 🚀");

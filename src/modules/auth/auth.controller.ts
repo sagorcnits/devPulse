@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 import { sendError } from "../../common/sendError";
 import { sendResponse } from "../../common/sendResponse";
-import { generateHasPassword } from "../../utils/hash-passowrd";
+import generateToken from "../../utils/generate-token";
+import {
+  comparePassword,
+  generateHasPassword,
+} from "../../utils/hash-passowrd";
 import authModel from "./auth.model";
 import authService from "./auth.services";
 import { TUser } from "./auth.types";
+// controller
 const authController = {
   register: async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
@@ -33,6 +38,30 @@ const authController = {
       res.status(500).json(error);
     }
   },
+
+  login: async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    const existingUser: any = await authService.getUserByEmail(email);
+    // generate token
+    const token = generateToken(existingUser[0]);
+
+    if (existingUser?.length > 0) {
+      const user = existingUser[0];
+      const isPasswordCorrect = await comparePassword(password, user.password);
+      if (isPasswordCorrect) {
+        return sendResponse(res, 200, "User logged in successfully", {
+          token,
+          user,
+        });
+      } else {
+        sendError(res, 404, "Invalid creadentials", "");
+      }
+    } else {
+      sendError(res, 404, "User not found", "");
+    }
+  },
+
   deleteUser: async (req: Request, res: Response) => {
     const { id } = req.params;
     try {

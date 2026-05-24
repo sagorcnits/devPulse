@@ -61,7 +61,11 @@ const issueController = {
         reporter_id,
       };
 
-      const issues = await issueModel.createIssue(issue as TIssue);
+      const issues = await issueService.updateIssue(
+        Number(id),
+        issue as TIssue,
+      );
+
       return sendResponse(res, 200, "Issue updated successfully", issues);
     } catch (error) {
       res.status(500).json(error);

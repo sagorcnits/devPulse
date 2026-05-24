@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { sendError } from "../common/sendError";
 
 export interface AppError extends Error {
   statusCode?: number;
@@ -17,5 +18,5 @@ export const errorHandler = (
 };
 
 export const notFound = (_req: Request, res: Response): void => {
-  res.status(404).json({ message: "Route not found" });
+  sendError(res, 404, "Not Found", { message: "Route not found" });
 };
